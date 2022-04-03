@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">FamilyMapClient</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="ServerPort">Server Port</string>
+    <string name="ServerHost">Server Host</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="firstName">First Name</string>
+    <string name="lastName">Last Name</string>
+    <string name="email">Email</string>
+    <string name="gender">Gender</string>
+    <string name="registerButton">Register</string>
+    <string name="loginButton">Login</string>
+    <string name="f">Female</string>
+    <string name="m">Male</string>
+    <string name="mapFragmentMessage">Click on a marker to see event details</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="eventTitle">Event</string>
+    <string name="familyTitle">Family</string>
+</resources>
