@@ -18,6 +18,7 @@
         android:layout_margin="8dp"
         android:text="@string/mapFragmentMessage"
         android:layout_alignParentBottom="true"
-        android:textAlignment="center"/>
+        android:textAlignment="center"
+        android:drawableLeft="@drawable/ic_launcher_foreground"/>
 
 </RelativeLayout>

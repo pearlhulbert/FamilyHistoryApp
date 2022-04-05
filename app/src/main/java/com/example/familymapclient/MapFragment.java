@@ -1,6 +1,14 @@
 package com.example.familymapclient;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
@@ -8,6 +16,7 @@ import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.familymapclient.R;
@@ -31,6 +40,10 @@ import Data.DataCache;
 import model.Event;
 import model.Person;
 
+import com.joanzapata.iconify.IconDrawable;
+import com.joanzapata.iconify.fonts.FontAwesomeIcons;
+
+
 
 public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapLoadedCallback {
     private GoogleMap map;
@@ -42,6 +55,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private View view;
     private Set<Integer> usedIndexes = new TreeSet<>();
     private DataCache instance;
+    private String currGender;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater layoutInflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,6 +64,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        /*final ActivityResultLauncher<Intent> orderInfoActivityLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+                            Intent resultData = result.getData();
+                            if(resultData != null) {
+
+                            }
+                        }
+                    }
+                });*/
 
         return view;
     }
@@ -67,12 +95,25 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                     Event currEvent = (Event) marker.getTag();
                     eventView = view.findViewById(R.id.mapTextView);
                     eventView.setText(eventToText(currEvent));
+                    Drawable genderIcon;
+                    if (currGender.equals("m")) {
+                        genderIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_male).
+                                colorRes(R.color.male_icon).sizeDp(40);
+                        eventView.setCompoundDrawables(genderIcon, null, null, null);
+                    }
+                    else if (currGender.equals("f")) {
+                        genderIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_female).
+                                colorRes(R.color.female_icon).sizeDp(40);
+                        eventView.setCompoundDrawables(genderIcon, null, null, null);
+                    }
                     map.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
+                    instance.setCurrPerson(instance.getPersonById(currEvent.getPersonId()));
                     return true;
                 }
                 return false;
             }
         });
+        //eventView.setOnClickListener(new onClickListener());
     }
 
     private void addEventMarkers() {
@@ -105,6 +146,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         instance = DataCache.getInstance();
         String eventString;
         Person currPerson = instance.getPersonById(event.getPersonId());
+        currGender = currPerson.getGender();
         eventString = currPerson.getFirstName() + " " + currPerson.getLastName() + "\n" +
                 event.getEventType() + ": " + event.getCity() + ", " + event.getCountry() + " (" +
                 event.getYear() + ")";
