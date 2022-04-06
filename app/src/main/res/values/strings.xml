@@ -17,4 +17,6 @@
     <string name="title_activity_maps">MapsActivity</string>
     <string name="eventTitle">Event</string>
     <string name="familyTitle">Family</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
 </resources>

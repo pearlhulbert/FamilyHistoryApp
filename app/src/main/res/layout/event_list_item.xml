@@ -15,7 +15,8 @@
         android:layout_marginStart="8dp"
         android:textSize="18sp"
         android:textStyle="bold"
-        tools:text="Deer Valley" />
+        tools:text="Deer Valley"
+        android:drawableLeft="@drawable/ic_launcher_foreground"/>
 
     <TextView
         android:id="@+id/eventLocation"
@@ -24,6 +25,6 @@
         android:layout_centerVertical="true"
         android:layout_toEndOf="@id/eventTitle"
         android:layout_marginStart="16dp"
-        tools:text="Park City"/>
+        tools:text="Park City" />
 
 </RelativeLayout>

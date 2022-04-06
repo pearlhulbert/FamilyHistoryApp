@@ -1,6 +1,8 @@
 package com.example.familymapclient;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.provider.Contacts;
@@ -11,9 +13,13 @@ import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.joanzapata.iconify.IconDrawable;
+import com.joanzapata.iconify.fonts.FontAwesomeIcons;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import Data.DataCache;
@@ -26,10 +32,26 @@ public class PersonActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_person);
+        DataCache instance = DataCache.getInstance();
+
+        TextView firstView = findViewById(R.id.firstNameTextView);
+        TextView lastView = findViewById(R.id.lastNameTextView);
+        TextView genderView = findViewById(R.id.genderTextView);
+
+        String firstName = instance.getCurrPerson().getFirstName();
+        String lastName = instance.getCurrPerson().getLastName();
+        firstView.setText(firstName);
+        lastView.setText(lastName);
+
+        if (instance.getCurrPerson().getGender().equals("m")) {
+            genderView.setText(R.string.male);
+        }
+        else if (instance.getCurrPerson().getGender().equals("f")) {
+            genderView.setText(R.string.female);
+        }
 
         ExpandableListView expandableListView = findViewById(R.id.expandableListView);
 
-        DataCache instance = DataCache.getInstance();
         List<Event> personEvents = instance.getPersonEvents().get(instance.getCurrPerson().getPersonID());
         List<Person> personFamily = new ArrayList<>();
         Person newPerson = new Person("id", "user", "first", "last", "f");
@@ -98,7 +120,7 @@ public class PersonActivity extends AppCompatActivity {
         @Override
         public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
             if(convertView == null) {
-                convertView = getLayoutInflater().inflate(R.layout.activity_person, parent, false);
+                convertView = getLayoutInflater().inflate(R.layout.person_group, parent, false);
             }
 
             TextView titleView = convertView.findViewById(R.id.listTitle);
@@ -138,11 +160,11 @@ public class PersonActivity extends AppCompatActivity {
         }
 
         private void initializeEventView(View eventItemView, final int childPosition) {
-            TextView resortNameView = eventItemView.findViewById(R.id.eventTitle);
-            resortNameView.setText(eventToText(personEvents.get(childPosition)));
-
-            /*TextView resortLocationView = eventItemView.findViewById(R.id.eventLocation);
-            resortLocationView.setText(perResorts.get(childPosition).getLocation());*/
+            TextView eventNameView = eventItemView.findViewById(R.id.eventTitle);
+            eventNameView.setText(eventToText(personEvents.get(childPosition)));
+            Drawable eventIcon = new IconDrawable(PersonActivity.this, FontAwesomeIcons.fa_map_marker)
+                    .colorRes(R.color.map_marker_icon).sizeDp(40);
+            eventNameView.setCompoundDrawables(eventIcon, null, null, null);
 
             eventItemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -156,30 +178,39 @@ public class PersonActivity extends AppCompatActivity {
             DataCache instance = DataCache.getInstance();
             String eventString;
             Person currPerson = instance.getPersonById(event.getPersonId());
-            eventString = currPerson.getFirstName() + " " + currPerson.getLastName() + "\n" +
-                    event.getEventType() + ": " + event.getCity() + ", " + event.getCountry() + " (" +
-                    event.getYear() + ")";
+            eventString = event.getEventType().toUpperCase() + ": " + event.getCity() + ", " + event.getCountry() + " (" +
+                    event.getYear() + ")\n" + currPerson.getFirstName() + " " + currPerson.getLastName();
             return eventString;
         }
 
         private void initializeFamilyView(View familyItemView, final int childPosition) {
-            TextView resortNameView = familyItemView.findViewById(R.id.familyTitle);
-            resortNameView.setText(personToText(personFamily.get(childPosition)));
-
-            /*TextView resortLocationView = eventItemView.findViewById(R.id.eventLocation);
-            resortLocationView.setText(perResorts.get(childPosition).getLocation());*/
-
+            DataCache instance = DataCache.getInstance();
+            instance.createPersonFamily();
+            Map<Person, String> family = instance.getPersonFamily();
+            TextView famNameView = familyItemView.findViewById(R.id.familyTitle);
+            famNameView.setText(personToText(personFamily.get(childPosition), family.get(personFamily.get(childPosition))));
+            Drawable genderIcon;
+            if (instance.getCurrPerson().getGender().equals("m")) {
+                genderIcon = new IconDrawable(PersonActivity.this, FontAwesomeIcons.fa_male).
+                        colorRes(R.color.male_icon).sizeDp(40);
+                famNameView.setCompoundDrawables(genderIcon, null, null, null);
+            }
+            else if (instance.getCurrPerson().getGender().equals("f")) {
+                genderIcon = new IconDrawable(PersonActivity.this, FontAwesomeIcons.fa_female).
+                        colorRes(R.color.female_icon).sizeDp(40);
+                famNameView.setCompoundDrawables(genderIcon, null, null, null);
+            }
             familyItemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(PersonActivity.this, personToText(personFamily.get(childPosition)), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PersonActivity.this, personToText(personFamily.get(childPosition), family.get(personFamily.get(childPosition))), Toast.LENGTH_SHORT).show();
                 }
             });
         }
 
-        private String personToText(Person person) {
+        private String personToText(Person person, String relationship) {
             String personString;
-            personString = "Mother: " + person.getFirstName() + " " + person.getLastName();
+            personString = relationship + ": " + person.getFirstName() + " " + person.getLastName();
             return personString;
         }
 

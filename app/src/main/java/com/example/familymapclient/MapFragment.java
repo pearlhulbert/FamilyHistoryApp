@@ -65,20 +65,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        /*final ActivityResultLauncher<Intent> orderInfoActivityLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
-                    @Override
-                    public void onActivityResult(ActivityResult result) {
-                        if (result.getResultCode() == Activity.RESULT_OK) {
-                            Intent resultData = result.getData();
-                            if(resultData != null) {
-
-                            }
-                        }
-                    }
-                });*/
-
         return view;
     }
 
@@ -88,12 +74,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         map.setOnMapLoadedCallback(this);
 
         addEventMarkers();
+        eventView = view.findViewById(R.id.mapTextView);
         map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(@NonNull Marker marker) {
                 if (marker != null) {
                     Event currEvent = (Event) marker.getTag();
-                    eventView = view.findViewById(R.id.mapTextView);
                     eventView.setText(eventToText(currEvent));
                     Drawable genderIcon;
                     if (currGender.equals("m")) {
@@ -113,7 +99,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 return false;
             }
         });
-        //eventView.setOnClickListener(new onClickListener());
+        eventView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), PersonActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void addEventMarkers() {
@@ -148,7 +140,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         Person currPerson = instance.getPersonById(event.getPersonId());
         currGender = currPerson.getGender();
         eventString = currPerson.getFirstName() + " " + currPerson.getLastName() + "\n" +
-                event.getEventType() + ": " + event.getCity() + ", " + event.getCountry() + " (" +
+                event.getEventType().toUpperCase() + ": " + event.getCity() + ", " + event.getCountry() + " (" +
                 event.getYear() + ")";
         return eventString;
     }

@@ -1,4 +1,5 @@
 package Data;
+
 import model.*;
 import java.util.*;
 
@@ -18,8 +19,8 @@ public class DataCache {
     private Map<String, Person> people;
     private Map<String, Event> events;
     private Map<String, List<Event>> personEvents;
-    private Map<String, Set<Person>> momSide;
-    private Map<String, Set<Person>> dadSide;
+    private Map<Person, String> personFamilyRelationships;
+    private Map<String, List<Person>> personFamily;
     private Person currPerson;
     private String currAuthtoken;
     private String userPersonId;
@@ -80,8 +81,58 @@ public class DataCache {
        return events.get(id);
     }
 
-    public List<Event> getPersonsEvents(String id) {
+    public List<Event> getPersonsEventsById(String id) {
        return personEvents.get(id);
+    }
+
+
+    public Map<Person, String> getPersonFamilyRelationships() {
+        return personFamilyRelationships;
+    }
+
+    public void setPersonFamilyRelationships(Map<Person, String> personFamilyRelationships) {
+        this.personFamilyRelationships = personFamilyRelationships;
+    }
+
+    public Map<String, List<Person>> getPersonFamily() {
+        return personFamily;
+    }
+
+    public void setPersonFamily(Map<String, List<Person>> personFamily) {
+        this.personFamily = personFamily;
+    }
+
+    public void createPersonFamily() {
+        if (!personFamilyRelationships.isEmpty() || !personFamily.isEmpty()) {
+            personFamilyRelationships.clear();
+        }
+        List<Person> theFam = new ArrayList<>();
+        if (currPerson.hasMother() || currPerson.hasSpouse()) {
+            for (Person p: people.values()) {
+                if (currPerson.hasMother()) {
+                    if (p.getPersonID().equals(currPerson.getMotherID())) {
+                        personFamilyRelationships.put(p,"Mother");
+                        theFam.add(p);
+                    }
+                    if (p.getPersonID().equals(currPerson.getFatherID())) {
+                        personFamilyRelationships.put(p, "Father");
+                        theFam.add(p);
+                    }
+                }
+                if (currPerson.hasSpouse()) {
+                    if (p.getPersonID().equals(currPerson.getSpouseID())) {
+                        personFamilyRelationships.put(p,"Spouse");
+                        theFam.add(p);
+                    }
+                    if (p.getMotherID().equals(currPerson.getPersonID()) || p.getFatherID().equals(currPerson.getPersonID())) {
+                        personFamilyRelationships.put(p,"Child");
+                        theFam.add(p);
+                    }
+                }
+            }
+            personFamily.put(currPerson.getPersonID(), theFam);
+        }
+
     }
 
 }
