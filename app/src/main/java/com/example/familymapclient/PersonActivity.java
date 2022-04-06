@@ -2,6 +2,7 @@ package com.example.familymapclient;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.CalendarContract;
@@ -197,7 +198,10 @@ public class PersonActivity extends AppCompatActivity {
             familyItemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(PersonActivity.this, personToText(personFamily.get(childPosition)), Toast.LENGTH_SHORT).show();
+                    DataCache instance = DataCache.getInstance();
+                    instance.setCurrPerson(personFamily.get(childPosition));
+                    Intent intent = new Intent(PersonActivity.this, PersonActivity.class);
+                    startActivity(intent);
                 }
             });
         }
