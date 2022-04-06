@@ -51,12 +51,9 @@ public class PersonActivity extends AppCompatActivity {
         }
 
         ExpandableListView expandableListView = findViewById(R.id.expandableListView);
-
+        instance.createPersonFamily();
         List<Event> personEvents = instance.getPersonEvents().get(instance.getCurrPerson().getPersonID());
-        List<Person> personFamily = new ArrayList<>();
-        Person newPerson = new Person("id", "user", "first", "last", "f");
-        personFamily.add(newPerson);
-
+        List<Person> personFamily = instance.getPersonFamily().get(instance.getCurrPerson().getPersonID());
         expandableListView.setAdapter(new ExpandableListAdapter(personEvents, personFamily));
     }
 
@@ -184,18 +181,15 @@ public class PersonActivity extends AppCompatActivity {
         }
 
         private void initializeFamilyView(View familyItemView, final int childPosition) {
-            DataCache instance = DataCache.getInstance();
-            instance.createPersonFamily();
-            Map<Person, String> family = instance.getPersonFamily();
             TextView famNameView = familyItemView.findViewById(R.id.familyTitle);
-            famNameView.setText(personToText(personFamily.get(childPosition), family.get(personFamily.get(childPosition))));
+            famNameView.setText(personToText(personFamily.get(childPosition)));
             Drawable genderIcon;
-            if (instance.getCurrPerson().getGender().equals("m")) {
+            if (personFamily.get(childPosition).getGender().equals("m")) {
                 genderIcon = new IconDrawable(PersonActivity.this, FontAwesomeIcons.fa_male).
                         colorRes(R.color.male_icon).sizeDp(40);
                 famNameView.setCompoundDrawables(genderIcon, null, null, null);
             }
-            else if (instance.getCurrPerson().getGender().equals("f")) {
+            else if (personFamily.get(childPosition).getGender().equals("f")) {
                 genderIcon = new IconDrawable(PersonActivity.this, FontAwesomeIcons.fa_female).
                         colorRes(R.color.female_icon).sizeDp(40);
                 famNameView.setCompoundDrawables(genderIcon, null, null, null);
@@ -203,14 +197,17 @@ public class PersonActivity extends AppCompatActivity {
             familyItemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(PersonActivity.this, personToText(personFamily.get(childPosition), family.get(personFamily.get(childPosition))), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PersonActivity.this, personToText(personFamily.get(childPosition)), Toast.LENGTH_SHORT).show();
                 }
             });
         }
 
-        private String personToText(Person person, String relationship) {
+        private String personToText(Person person) {
             String personString;
-            personString = relationship + ": " + person.getFirstName() + " " + person.getLastName();
+            DataCache instance = DataCache.getInstance();
+            instance.createPersonFamily();
+            Map<Person, String> familyRelationships = instance.getPersonFamilyRelationships();
+            personString = familyRelationships.get(person) + ": " + person.getFirstName() + " " + person.getLastName();
             return personString;
         }
 

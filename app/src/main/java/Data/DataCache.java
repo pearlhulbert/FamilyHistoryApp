@@ -14,6 +14,8 @@ public class DataCache {
         this.people = new HashMap<>();
         this.events = new HashMap<>();
         this.personEvents = new HashMap<>();
+        this.personFamilyRelationships = new HashMap<>();
+        this.personFamily = new HashMap<>();
     }
 
     private Map<String, Person> people;
@@ -124,9 +126,11 @@ public class DataCache {
                         personFamilyRelationships.put(p,"Spouse");
                         theFam.add(p);
                     }
-                    if (p.getMotherID().equals(currPerson.getPersonID()) || p.getFatherID().equals(currPerson.getPersonID())) {
-                        personFamilyRelationships.put(p,"Child");
-                        theFam.add(p);
+                    if (p.hasMother()) {
+                        if (p.getMotherID().equals(currPerson.getPersonID()) || p.getFatherID().equals(currPerson.getPersonID())) {
+                            personFamilyRelationships.put(p,"Child");
+                            theFam.add(p);
+                        }
                     }
                 }
             }
