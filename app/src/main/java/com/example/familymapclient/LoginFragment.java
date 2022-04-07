@@ -307,17 +307,6 @@ public class LoginFragment extends Fragment {
             instance.setPersonEvents(personEvents);
         }
 
-        /*private void addPersonFamily(Person[] people) {
-            Map<String, Set<String>> family = new HashMap<>();
-            for (int i = 0; i < people.length; ++i) {
-                Set<String> momSide = new TreeSet<>();
-                Set<String> dadSide = new TreeSet<>();
-                if (people[i].getMotherID() != null) {
-                    family.put(people[i].getPersonID(), momSide);
-                }
-            }
-        }*/
-
         private void sendMessage(boolean success) {
             Message message = Message.obtain();
 

@@ -167,7 +167,10 @@ public class PersonActivity extends AppCompatActivity {
             eventItemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(PersonActivity.this, eventToText(personEvents.get(childPosition)), Toast.LENGTH_SHORT).show();
+                    DataCache instance = DataCache.getInstance();
+                    instance.setCurrEvent(personEvents.get(childPosition));
+                    Intent intent = new Intent(PersonActivity.this, EventActivity.class);
+                    startActivity(intent);
                 }
             });
         }

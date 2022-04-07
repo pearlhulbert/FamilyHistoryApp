@@ -74,6 +74,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         map.setOnMapLoadedCallback(this);
 
         addEventMarkers();
+        if (getActivity().getClass() == EventActivity.class) {
+
+        }
         eventView = view.findViewById(R.id.mapTextView);
         map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override

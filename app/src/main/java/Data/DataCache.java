@@ -26,6 +26,15 @@ public class DataCache {
     private Person currPerson;
     private String currAuthtoken;
     private String userPersonId;
+    private Event currEvent;
+
+    public Event getCurrEvent() {
+        return currEvent;
+    }
+
+    public void setCurrEvent(Event currEvent) {
+        this.currEvent = currEvent;
+    }
 
     public String getUserPersonId() {
         return userPersonId;
