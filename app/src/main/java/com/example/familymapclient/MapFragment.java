@@ -72,36 +72,27 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
         map.setOnMapLoadedCallback(this);
-
+        instance = DataCache.getInstance();
+        eventView = view.findViewById(R.id.mapTextView);
         addEventMarkers();
         if (getActivity().getClass() == EventActivity.class) {
-
+           Event currEvent = instance.getCurrEvent();
+           LatLng position = new LatLng(currEvent.getLatitude(), currEvent.getLongitude());
+           displayEvent(currEvent, position);
         }
-        eventView = view.findViewById(R.id.mapTextView);
-        map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(@NonNull Marker marker) {
-                if (marker != null) {
-                    Event currEvent = (Event) marker.getTag();
-                    eventView.setText(eventToText(currEvent));
-                    Drawable genderIcon;
-                    if (currGender.equals("m")) {
-                        genderIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_male).
-                                colorRes(R.color.male_icon).sizeDp(40);
-                        eventView.setCompoundDrawables(genderIcon, null, null, null);
+        else {
+            map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(@NonNull Marker marker) {
+                    if (marker != null) {
+                        Event currEvent = (Event) marker.getTag();
+                        displayEvent(currEvent, marker.getPosition());
+                        return true;
                     }
-                    else if (currGender.equals("f")) {
-                        genderIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_female).
-                                colorRes(R.color.female_icon).sizeDp(40);
-                        eventView.setCompoundDrawables(genderIcon, null, null, null);
-                    }
-                    map.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
-                    instance.setCurrPerson(instance.getPersonById(currEvent.getPersonId()));
-                    return true;
+                    return false;
                 }
-                return false;
-            }
-        });
+            });
+        }
         eventView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -109,6 +100,23 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 startActivity(intent);
             }
         });
+    }
+
+    private void displayEvent(Event currEvent, LatLng position) {
+        eventView.setText(eventToText(currEvent));
+        Drawable genderIcon;
+        if (currGender.equals("m")) {
+            genderIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_male).
+                    colorRes(R.color.male_icon).sizeDp(40);
+            eventView.setCompoundDrawables(genderIcon, null, null, null);
+        }
+        else if (currGender.equals("f")) {
+            genderIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_female).
+                    colorRes(R.color.female_icon).sizeDp(40);
+            eventView.setCompoundDrawables(genderIcon, null, null, null);
+        }
+        map.animateCamera(CameraUpdateFactory.newLatLng(position));
+        instance.setCurrPerson(instance.getPersonById(currEvent.getPersonId()));
     }
 
     private void addEventMarkers() {

@@ -54,5 +54,4 @@ dependencies {
     implementation ("com.joanzapata.iconify:android-iconify-fontawesome:2.2.2") {
         exclude group: "com.android.support"
     }
-    implementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
 }

@@ -1,8 +1,10 @@
 package ServerProxyTest;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.Assert.*;
+
+import org.junit.After;
+import org.junit.Test;
+import org.junit.Before;
 
 import Data.DataCache;
 import Proxy.ServerProxy;
@@ -13,7 +15,6 @@ import result.FamilyResult;
 import result.LoginResult;
 import result.RegisterResult;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 public class ProxyTest {
 
@@ -23,7 +24,7 @@ public class ProxyTest {
     private RegisterResult registerResult;
     private DataCache instance;
 
-    @BeforeEach
+    @Before
     public void setUp()  {
         loginRequest = new LoginRequest("username", "password");
         proxy = new ServerProxy("localhost", "8080");
@@ -33,7 +34,7 @@ public class ProxyTest {
         instance = DataCache.getInstance();
     }
 
-    @AfterEach
+    @After
     public void tearDown() {
     }
 
