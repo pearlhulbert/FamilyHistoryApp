@@ -19,4 +19,5 @@
     <string name="familyTitle">Family</string>
     <string name="male">Male</string>
     <string name="female">Female</string>
+    <string name="search">Search</string>
 </resources>

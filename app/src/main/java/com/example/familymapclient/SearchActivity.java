@@ -5,15 +5,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.FontAwesomeIcons;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import Data.DataCache;
 import model.Event;
@@ -29,31 +35,85 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
 
-        RecyclerView recyclerView = findViewById(R.id.RecyclerView);
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(SearchActivity.this));
 
+        SearchView searchView = findViewById(R.id.search_button);
         DataCache instance = DataCache.getInstance();
-        Event[] eventArray = new Event[instance.getEvents().size()];
-        Person[] personArray = new Person[instance.getPeople().size()];
-        Event[] events = instance.getEvents().values().toArray(eventArray);
-        Person[] people = instance.getPeople().values().toArray(personArray);
 
-        SearchAdapter adapter = new SearchAdapter(events, people);
+        List<Event> events = new ArrayList<>();
+        events.addAll(instance.getEvents().values());
+        List<Person> people = new ArrayList<>();
+        people.addAll(instance.getPeople().values());
+        List<Event> keepEvents = new ArrayList<>();
+        List<Person> keepPeople = new ArrayList<>();
+
+        Drawable drawable = new IconDrawable(SearchActivity.this, FontAwesomeIcons.fa_search).
+                colorRes(R.color.map_marker_icon).sizeDp(40);
+        //searchView.setIcon(drawable);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                for (Event e : events) {
+                    if (eventToText(e).contains(s)) {
+                        keepEvents.add(e);
+                    }
+                }
+                for (Person p : people) {
+                    if (personToText(p).contains(s)) {
+                        keepPeople.add(p);
+                    }
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                for (Event e : events) {
+                    if (eventToText(e).contains(s)) {
+                        keepEvents.add(e);
+                    }
+                }
+                for (Person p : people) {
+                    if (personToText(p).contains(s)) {
+                        keepPeople.add(p);
+                    }
+                }
+                return true;
+            }
+        });
+
+        SearchAdapter adapter = new SearchAdapter(keepEvents, keepPeople);
         recyclerView.setAdapter(adapter);
     }
 
-    private class SearchAdapter extends RecyclerView.Adapter<SearchViewHolder> {
-        private final Event[] eventList;
-        private final Person[] peopleList;
+    private String eventToText(Event event) {
+        DataCache instance = DataCache.getInstance();
+        String eventString;
+        Person currPerson = instance.getPersonById(event.getPersonId());
+        eventString = event.getEventType().toUpperCase() + ": " + event.getCity() + ", " + event.getCountry() + " (" +
+                event.getYear() + ")\n" + currPerson.getFirstName() + " " + currPerson.getLastName();
+        return eventString;
+    }
 
-        SearchAdapter(Event[] eventList, Person[] peopleList) {
+    private String personToText(Person person) {
+        String personString;
+        personString = person.getFirstName() + " " + person.getLastName();
+        return personString;
+    }
+
+    private class SearchAdapter extends RecyclerView.Adapter<SearchViewHolder> {
+        private final List<Event> eventList;
+        private final List<Person> peopleList;
+
+        SearchAdapter(List<Event> eventList, List<Person> peopleList) {
             this.eventList = eventList;
             this.peopleList = peopleList;
         }
 
         @Override
         public int getItemViewType(int position) {
-            return position < eventList.length ? EVENT_ITEM_VIEW_TYPE : FAMILY_ITEM_VIEW_TYPE;
+            return position < eventList.size() ? EVENT_ITEM_VIEW_TYPE : FAMILY_ITEM_VIEW_TYPE;
         }
 
         @NonNull
@@ -72,16 +132,16 @@ public class SearchActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull SearchViewHolder holder, int position) {
-            if(position < eventList.length) {
-                holder.bind(eventList[position]);
+            if(position < eventList.size()) {
+                holder.bind(eventList.get(position));
             } else {
-                holder.bind(peopleList[position - eventList.length]);
+                holder.bind(peopleList.get(position - eventList.size()));
             }
         }
 
         @Override
         public int getItemCount() {
-            return eventList.length + peopleList.length;
+            return eventList.size() + peopleList.size();
         }
     }
 
@@ -138,15 +198,15 @@ public class SearchActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             if(viewType == EVENT_ITEM_VIEW_TYPE) {
-                // This is were we could pass the skiResort to a ski resort detail activity
-
-                Toast.makeText(SearchActivity.this, String.format("Enjoy skiing %s!",
-                       event.getEventType()), Toast.LENGTH_SHORT).show();
+                DataCache instance = DataCache.getInstance();
+                instance.setCurrEvent(event);
+                Intent intent = new Intent(SearchActivity.this, EventActivity.class);
+                startActivity(intent);
             } else {
-                // This is were we could pass the hikingTrail to a hiking trail detail activity
-
-                Toast.makeText(SearchActivity.this, String.format("Enjoy hiking %s",
-                        person.getFirstName()), Toast.LENGTH_SHORT).show();
+                DataCache instance = DataCache.getInstance();
+                instance.setCurrPerson(person);
+                Intent intent = new Intent(SearchActivity.this, PersonActivity.class);
+                startActivity(intent);
             }
         }
     }
