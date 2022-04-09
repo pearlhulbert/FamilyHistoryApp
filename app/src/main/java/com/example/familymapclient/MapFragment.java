@@ -1,6 +1,7 @@
 package com.example.familymapclient;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -13,10 +14,12 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.provider.ContactsContract;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -61,6 +64,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private String currGender;
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater layoutInflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(layoutInflater, container, savedInstanceState);
         view = layoutInflater.inflate(R.layout.fragment_map, container, false);
@@ -79,14 +88,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.search_button:
-                Intent searchIntent = new Intent(getContext(), SearchActivity.class);
-                startActivity(searchIntent);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() ==  R.id.search_button) {
+            Intent searchIntent = new Intent(getActivity(), SearchActivity.class);
+            startActivity(searchIntent);
+            return true;
         }
+        else {
+            return super.onOptionsItemSelected(item);
+        }
+
     }
 
     @Override

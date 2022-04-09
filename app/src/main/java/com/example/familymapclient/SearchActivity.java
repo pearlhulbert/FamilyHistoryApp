@@ -33,12 +33,12 @@ public class SearchActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_activity);
+        setContentView(R.layout.activity_search);
 
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(SearchActivity.this));
 
-        SearchView searchView = findViewById(R.id.search_button);
+        SearchView searchView = findViewById(R.id.searchBar);
         DataCache instance = DataCache.getInstance();
 
         List<Event> events = new ArrayList<>();
@@ -48,29 +48,18 @@ public class SearchActivity extends AppCompatActivity {
         List<Event> keepEvents = new ArrayList<>();
         List<Person> keepPeople = new ArrayList<>();
 
-        Drawable drawable = new IconDrawable(SearchActivity.this, FontAwesomeIcons.fa_search).
-                colorRes(R.color.map_marker_icon).sizeDp(40);
-        //searchView.setIcon(drawable);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                for (Event e : events) {
-                    if (eventToText(e).contains(s)) {
-                        keepEvents.add(e);
-                    }
-                }
-                for (Person p : people) {
-                    if (personToText(p).contains(s)) {
-                        keepPeople.add(p);
-                    }
-                }
-                return true;
+               return true;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
+                keepEvents.clear();
+                keepPeople.clear();
                 for (Event e : events) {
-                    if (eventToText(e).contains(s)) {
+                    if (eventToText(e).toLowerCase().contains(s.toLowerCase())) {
                         keepEvents.add(e);
                     }
                 }
@@ -171,7 +160,6 @@ public class SearchActivity extends AppCompatActivity {
             Drawable eventIcon = new IconDrawable(SearchActivity.this, FontAwesomeIcons.fa_map_marker)
                     .colorRes(R.color.map_marker_icon).sizeDp(40);
             name.setCompoundDrawables(eventIcon, null, null, null);
-
 
         }
 
