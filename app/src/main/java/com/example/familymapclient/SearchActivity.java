@@ -108,7 +108,7 @@ public class SearchActivity extends AppCompatActivity {
         private void bind(Event event) {
             this.event = event;
             name.setText(eventToText(event));
-            Drawable eventIcon = new IconDrawable(PersonActivity.this, FontAwesomeIcons.fa_map_marker)
+            Drawable eventIcon = new IconDrawable(SearchActivity.this, FontAwesomeIcons.fa_map_marker)
                     .colorRes(R.color.map_marker_icon).sizeDp(40);
             name.setCompoundDrawables(eventIcon, null, null, null);
 

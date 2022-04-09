@@ -1,10 +1,8 @@
 package ServerProxyTest;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.After;
-import org.junit.Test;
-import org.junit.Before;
+import org.junit.jupiter.api.*;
 
 import Data.DataCache;
 import Proxy.ServerProxy;
@@ -24,22 +22,22 @@ public class ProxyTest {
     private RegisterResult registerResult;
     private DataCache instance;
 
-    @Before
+    @BeforeEach
     public void setUp()  {
         loginRequest = new LoginRequest("username", "password");
         proxy = new ServerProxy("localhost", "8080");
         registerRequest = new RegisterRequest("username", "password",  "email", "firstName",
                 "lastName", "gender");
-        registerResult = proxy.register(registerRequest);
         instance = DataCache.getInstance();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
     }
 
     @Test
     public void registerPassOneUser() {
+        registerResult = proxy.register(registerRequest);
         assertTrue(registerResult.isSuccess());
         assertNotNull(instance.getPersonById(registerResult.getPersonID()));
         assertEquals(instance.getPersonById(registerResult.getPersonID()).getFirstName(), registerRequest.getFirstName());
@@ -62,12 +60,14 @@ public class ProxyTest {
 
     @Test
     public void registerFail() {
+        proxy.register(registerRequest);
         RegisterResult result = proxy.register(registerRequest);
         assertFalse(result.isSuccess());
     }
 
     @Test
     public void loginPass()  {
+        registerResult = proxy.register(registerRequest);
         LoginResult result = proxy.login(loginRequest);
         assertTrue(result.isSuccess());
         assertNotNull(instance.getPersonById(result.getPersonID()));
@@ -84,6 +84,8 @@ public class ProxyTest {
 
     @Test
     public void familyPass() {
+        registerResult = proxy.register(registerRequest);
+        LoginResult loginResult = proxy.login(loginRequest);
         FamilyResult result = proxy.getFamily();
         assertTrue(result.isSuccess());
         assertNotNull(result.getFamily());
@@ -112,6 +114,8 @@ public class ProxyTest {
 
     @Test
     public void allEventPass() {
+        registerResult = proxy.register(registerRequest);
+        LoginResult loginResult = proxy.login(loginRequest);
         AllEventResult result = proxy.getEvents();
         assertTrue(result.isSuccess());
         assertNotNull(result.getData());
