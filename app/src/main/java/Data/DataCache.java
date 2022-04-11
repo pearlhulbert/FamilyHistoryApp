@@ -148,4 +148,28 @@ public class DataCache {
 
     }
 
+    /*public List<Event> orderEvents(List<Event> events) {
+        List<Event> orderedEvents = new ArrayList<>();
+        int maxYear = 0;
+        for (int i = 0; i < events.size(); ++i) {
+            if (events.get(i).getYear() > maxYear) {
+                maxYear = events.get(i).getYear();
+                orderedEvents;
+            }
+        }
+        return orderedEvents;
+    }*/
+
+    /*public void orderPeople(List<Person> people) {
+        List<Person> orderedPeople = new ArrayList<>();
+        int maxYear = 0;
+        for (int i = 0; i < people.size(); ++i) {
+            if (people.get(i).getYear() > maxYear) {
+                maxYear = events.get(i).getYear();
+                orderedEvents.add(i, events.get(i));
+            }
+        }
+        return orderedEvents;
+    }*/
+
 }

@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.provider.Contacts;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
@@ -56,6 +57,16 @@ public class PersonActivity extends AppCompatActivity {
         List<Event> personEvents = instance.getPersonEvents().get(instance.getCurrPerson().getPersonID());
         List<Person> personFamily = instance.getPersonFamily().get(instance.getCurrPerson().getPersonID());
         expandableListView.setAdapter(new ExpandableListAdapter(personEvents, personFamily));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }
+        return true;
     }
 
     private class ExpandableListAdapter extends BaseExpandableListAdapter {

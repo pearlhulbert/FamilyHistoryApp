@@ -43,10 +43,12 @@ public class SearchActivity extends AppCompatActivity {
 
         List<Event> events = new ArrayList<>();
         events.addAll(instance.getEvents().values());
+        List<Event> orderEvents = instance.orderEvents(events);
         List<Person> people = new ArrayList<>();
         people.addAll(instance.getPeople().values());
         List<Event> keepEvents = new ArrayList<>();
         List<Person> keepPeople = new ArrayList<>();
+        SearchAdapter adapter = new SearchAdapter(keepEvents, keepPeople);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -58,7 +60,7 @@ public class SearchActivity extends AppCompatActivity {
             public boolean onQueryTextChange(String s) {
                 keepEvents.clear();
                 keepPeople.clear();
-                for (Event e : events) {
+                for (Event e : orderEvents) {
                     if (eventToText(e).toLowerCase().contains(s.toLowerCase())) {
                         keepEvents.add(e);
                         System.out.println("Event: " + eventToText(e));
@@ -70,11 +72,10 @@ public class SearchActivity extends AppCompatActivity {
                         System.out.println("Person: " + personToText(p));
                     }
                 }
+                adapter.updateStuff(keepEvents, keepPeople);
                 return true;
             }
         });
-
-        SearchAdapter adapter = new SearchAdapter(keepEvents, keepPeople);
         recyclerView.setAdapter(adapter);
     }
 
@@ -94,12 +95,18 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private class SearchAdapter extends RecyclerView.Adapter<SearchViewHolder> {
-        private final List<Event> eventList;
-        private final List<Person> peopleList;
+        private List<Event> eventList;
+        private List<Person> peopleList;
 
         SearchAdapter(List<Event> eventList, List<Person> peopleList) {
             this.eventList = eventList;
             this.peopleList = peopleList;
+        }
+
+        public void updateStuff(List<Event> events, List<Person> people) {
+            this.eventList = events;
+            this.peopleList = people;
+            notifyDataSetChanged();
         }
 
         @Override
@@ -113,10 +120,10 @@ public class SearchActivity extends AppCompatActivity {
             System.out.println("View Holder");
             View view;
 
-            if(viewType == EVENT_ITEM_VIEW_TYPE) {
-                view = getLayoutInflater().inflate(R.layout.event_search, parent, false);
-            } else {
+            if(viewType == FAMILY_ITEM_VIEW_TYPE) {
                 view = getLayoutInflater().inflate(R.layout.family_search, parent, false);
+            } else {
+                view = getLayoutInflater().inflate(R.layout.event_search, parent, false);
             }
 
             return new SearchViewHolder(view, viewType);
@@ -125,10 +132,10 @@ public class SearchActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull SearchViewHolder holder, int position) {
             System.out.println(" on bind View Holder");
-            if(position < eventList.size()) {
-                holder.bind(eventList.get(position));
+            if(position < peopleList.size()) {
+                holder.bind(peopleList.get(position));
             } else {
-                holder.bind(peopleList.get(position - eventList.size()));
+                holder.bind(eventList.get(position - peopleList.size()));
             }
         }
 
@@ -151,10 +158,10 @@ public class SearchActivity extends AppCompatActivity {
 
             itemView.setOnClickListener(this);
 
-            if(viewType == EVENT_ITEM_VIEW_TYPE) {
-                name = itemView.findViewById(R.id.eventTitleSearch);
-            } else {
+            if(viewType == FAMILY_ITEM_VIEW_TYPE) {
                 name = itemView.findViewById(R.id.familyTitleSearch);
+            } else {
+                name = itemView.findViewById(R.id.eventTitleSearch);
             }
         }
 

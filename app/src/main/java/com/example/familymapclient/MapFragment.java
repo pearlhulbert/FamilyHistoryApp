@@ -66,7 +66,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
+        if (getActivity().getClass() == MainActivity.class) {
+            setHasOptionsMenu(true);
+        }
     }
 
     @Override
