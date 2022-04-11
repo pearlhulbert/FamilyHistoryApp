@@ -61,11 +61,13 @@ public class SearchActivity extends AppCompatActivity {
                 for (Event e : events) {
                     if (eventToText(e).toLowerCase().contains(s.toLowerCase())) {
                         keepEvents.add(e);
+                        System.out.println("Event: " + eventToText(e));
                     }
                 }
                 for (Person p : people) {
-                    if (personToText(p).contains(s)) {
+                    if (personToText(p).toLowerCase().contains(s.toLowerCase())) {
                         keepPeople.add(p);
+                        System.out.println("Person: " + personToText(p));
                     }
                 }
                 return true;
@@ -108,12 +110,13 @@ public class SearchActivity extends AppCompatActivity {
         @NonNull
         @Override
         public SearchViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            System.out.println("View Holder");
             View view;
 
             if(viewType == EVENT_ITEM_VIEW_TYPE) {
-                view = getLayoutInflater().inflate(R.layout.event_list_item, parent, false);
+                view = getLayoutInflater().inflate(R.layout.event_search, parent, false);
             } else {
-                view = getLayoutInflater().inflate(R.layout.family_list_item, parent, false);
+                view = getLayoutInflater().inflate(R.layout.family_search, parent, false);
             }
 
             return new SearchViewHolder(view, viewType);
@@ -121,6 +124,7 @@ public class SearchActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull SearchViewHolder holder, int position) {
+            System.out.println(" on bind View Holder");
             if(position < eventList.size()) {
                 holder.bind(eventList.get(position));
             } else {
@@ -148,14 +152,16 @@ public class SearchActivity extends AppCompatActivity {
             itemView.setOnClickListener(this);
 
             if(viewType == EVENT_ITEM_VIEW_TYPE) {
-                name = itemView.findViewById(R.id.eventTitle);
+                name = itemView.findViewById(R.id.eventTitleSearch);
             } else {
-                name = itemView.findViewById(R.id.familyTitle);
+                name = itemView.findViewById(R.id.familyTitleSearch);
             }
         }
 
         private void bind(Event event) {
+            System.out.println("bind event");
             this.event = event;
+            System.out.println("Event (bind): " + eventToText(event));
             name.setText(eventToText(event));
             Drawable eventIcon = new IconDrawable(SearchActivity.this, FontAwesomeIcons.fa_map_marker)
                     .colorRes(R.color.map_marker_icon).sizeDp(40);
@@ -164,8 +170,21 @@ public class SearchActivity extends AppCompatActivity {
         }
 
         private void bind(Person person) {
+            System.out.println("bind person");
             this.person = person;
+            System.out.println("Person (bind): " + personToText(person));
             name.setText(personToText(person));
+            Drawable genderIcon;
+            if (person.getGender().equals("m")) {
+                genderIcon = new IconDrawable(SearchActivity.this, FontAwesomeIcons.fa_male)
+                        .colorRes(R.color.male_icon).sizeDp(40);
+                name.setCompoundDrawables(genderIcon, null, null, null);
+            }
+            else if (person.getGender().equals("f")) {
+                genderIcon = new IconDrawable(SearchActivity.this, FontAwesomeIcons.fa_female)
+                        .colorRes(R.color.female_icon).sizeDp(40);
+                name.setCompoundDrawables(genderIcon, null, null, null);
+            }
         }
 
         private String eventToText(Event event) {

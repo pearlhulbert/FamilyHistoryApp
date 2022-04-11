@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context="com.example.familymapclient.PersonActivity">
+    tools:context="com.example.familymapclient.SearchActivity">
 
     <TextView
-        android:id="@+id/familyTitle"
+        android:id="@+id/eventTitleSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
@@ -19,12 +19,17 @@
         android:drawableLeft="@drawable/ic_launcher_foreground"/>
 
     <TextView
-        android:id="@+id/famInfo"
+        android:id="@+id/eventLocationSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_toEndOf="@id/familyTitle"
+        android:layout_toEndOf="@id/eventTitleSearch"
         android:layout_marginStart="16dp"
         tools:text="Park City" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
 
 </RelativeLayout>
