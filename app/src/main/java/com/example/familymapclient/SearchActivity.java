@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
@@ -43,7 +44,6 @@ public class SearchActivity extends AppCompatActivity {
 
         List<Event> events = new ArrayList<>();
         events.addAll(instance.getEvents().values());
-        List<Event> orderEvents = instance.orderEvents(events);
         List<Person> people = new ArrayList<>();
         people.addAll(instance.getPeople().values());
         List<Event> keepEvents = new ArrayList<>();
@@ -60,7 +60,7 @@ public class SearchActivity extends AppCompatActivity {
             public boolean onQueryTextChange(String s) {
                 keepEvents.clear();
                 keepPeople.clear();
-                for (Event e : orderEvents) {
+                for (Event e : events) {
                     if (eventToText(e).toLowerCase().contains(s.toLowerCase())) {
                         keepEvents.add(e);
                         System.out.println("Event: " + eventToText(e));
@@ -77,6 +77,16 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
         recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }
+        return true;
     }
 
     private String eventToText(Event event) {
@@ -111,7 +121,7 @@ public class SearchActivity extends AppCompatActivity {
 
         @Override
         public int getItemViewType(int position) {
-            return position < eventList.size() ? EVENT_ITEM_VIEW_TYPE : FAMILY_ITEM_VIEW_TYPE;
+            return position < peopleList.size() ? FAMILY_ITEM_VIEW_TYPE : EVENT_ITEM_VIEW_TYPE;
         }
 
         @NonNull
@@ -209,17 +219,18 @@ public class SearchActivity extends AppCompatActivity {
             return personString;
         }
 
+
         @Override
         public void onClick(View view) {
-            if(viewType == EVENT_ITEM_VIEW_TYPE) {
-                DataCache instance = DataCache.getInstance();
-                instance.setCurrEvent(event);
-                Intent intent = new Intent(SearchActivity.this, EventActivity.class);
-                startActivity(intent);
-            } else {
+            if (viewType == FAMILY_ITEM_VIEW_TYPE) {
                 DataCache instance = DataCache.getInstance();
                 instance.setCurrPerson(person);
                 Intent intent = new Intent(SearchActivity.this, PersonActivity.class);
+                startActivity(intent);
+            } else {
+                DataCache instance = DataCache.getInstance();
+                instance.setCurrEvent(event);
+                Intent intent = new Intent(SearchActivity.this, EventActivity.class);
                 startActivity(intent);
             }
         }
