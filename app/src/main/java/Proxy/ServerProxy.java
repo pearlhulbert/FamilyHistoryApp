@@ -20,6 +20,7 @@ import request.FamilyRequest;
 import request.LoginRequest;
 import request.RegisterRequest;
 import result.AllEventResult;
+import result.ClearResult;
 import result.FamilyResult;
 import result.LoginResult;
 import result.RegisterResult;
@@ -224,6 +225,43 @@ public class ServerProxy {
         catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
+    }
+
+    public ClearResult clear() {
+       try {
+           URL url = new URL("http://" + serverHost + ":" + serverPort + "/clear");
+           HttpURLConnection http = (HttpURLConnection) url.openConnection();
+           http.setRequestMethod("POST");
+           http.setDoOutput(false);
+           http.connect();
+           Gson gson = new Gson();
+           if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
+               System.out.println("Clear success!");
+               InputStream respBody = http.getInputStream();
+               String respData = readString(respBody);
+               respBody.close();
+               ClearResult result = gson.fromJson(respData, ClearResult.class);
+               return result;
+           }
+           else {
+               System.out.println("ERROR: " + http.getResponseMessage());
+
+               InputStream respBody = http.getErrorStream();
+
+               String respData = readString(respBody);
+
+               respBody.close();
+
+               System.out.println(respData);
+           }
+       }
+       catch (MalformedURLException m) {
+           m.printStackTrace();
+       }
+       catch (IOException e) {
+           e.printStackTrace();
+       }
         return null;
     }
 

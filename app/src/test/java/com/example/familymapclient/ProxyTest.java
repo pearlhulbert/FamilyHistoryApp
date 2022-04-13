@@ -1,8 +1,11 @@
-package ServerProxyTest;
+package com.example.familymapclient;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.After;
+import org.junit.Test;
+import org.junit.Before;
 
-import org.junit.jupiter.api.*;
+import static org.junit.Assert.*;
+
 
 import Data.DataCache;
 import Proxy.ServerProxy;
@@ -22,27 +25,26 @@ public class ProxyTest {
     private RegisterResult registerResult;
     private DataCache instance;
 
-    @BeforeEach
+    @Before
     public void setUp()  {
         loginRequest = new LoginRequest("username", "password");
         proxy = new ServerProxy("localhost", "8080");
         registerRequest = new RegisterRequest("username", "password",  "email", "firstName",
                 "lastName", "gender");
         instance = DataCache.getInstance();
+        registerResult = proxy.register(registerRequest);
     }
 
-    @AfterEach
-    public void tearDown() {
+    @After
+    public void cleanUp() {
+        proxy.clear();
     }
+
 
     @Test
     public void registerPassOneUser() {
-        registerResult = proxy.register(registerRequest);
         assertTrue(registerResult.isSuccess());
-        assertNotNull(instance.getPersonById(registerResult.getPersonID()));
-        assertEquals(instance.getPersonById(registerResult.getPersonID()).getFirstName(), registerRequest.getFirstName());
-        assertEquals(instance.getPersonById(registerResult.getPersonID()).getLastName(), registerRequest.getLastName());
-        assertEquals(instance.getPersonById(registerResult.getPersonID()).getGender(), registerRequest.getGender());
+        assertEquals(instance.getCurrPerson().getPersonID(), registerResult.getPersonID());
     }
 
     @Test
@@ -51,28 +53,21 @@ public class ProxyTest {
                 "lName", "g");
         RegisterResult secondResult = proxy.register(request);
         assertTrue(secondResult.isSuccess());
-        assertNotNull(instance.getPersonById(secondResult.getPersonID()));
-        assertEquals(instance.getPersonById(secondResult.getPersonID()).getFirstName(), request.getFirstName());
-        assertEquals(instance.getPersonById(secondResult.getPersonID()).getLastName(), request.getLastName());
-        assertEquals(instance.getPersonById(secondResult.getPersonID()).getGender(), request.getGender());
-
+        assertEquals(instance.getCurrPerson().getPersonID(), secondResult.getPersonID());
     }
 
     @Test
     public void registerFail() {
-        proxy.register(registerRequest);
         RegisterResult result = proxy.register(registerRequest);
         assertFalse(result.isSuccess());
     }
 
     @Test
     public void loginPass()  {
-        registerResult = proxy.register(registerRequest);
         LoginResult result = proxy.login(loginRequest);
         assertTrue(result.isSuccess());
-        assertNotNull(instance.getPersonById(result.getPersonID()));
-        assertEquals(instance.getPersonById(result.getPersonID()).getAssociatedUsername(), loginRequest.getUsername());
-        assertEquals(result.getPersonID(), registerResult.getPersonID());
+        assertEquals(instance.getUserPersonId(), result.getPersonID());
+        assertEquals(instance.getCurrAuthtoken(), result.getAuthtoken());
     }
 
     @Test
@@ -84,8 +79,7 @@ public class ProxyTest {
 
     @Test
     public void familyPass() {
-        registerResult = proxy.register(registerRequest);
-        LoginResult loginResult = proxy.login(loginRequest);
+        proxy.login(loginRequest);
         FamilyResult result = proxy.getFamily();
         assertTrue(result.isSuccess());
         assertNotNull(result.getFamily());
@@ -93,13 +87,6 @@ public class ProxyTest {
         assertNotNull(instance.getCurrAuthtoken());
         int familySize = 31;
         assertEquals(familySize, result.getFamily().length);
-        boolean familyMatch = true;
-        for (int i = 0; i < result.getFamily().length; ++i) {
-            if (instance.getPersonById(result.getFamily()[i].getPersonID()) == null) {
-                familyMatch = false;
-            }
-        }
-        assertTrue(familyMatch);
     }
 
     @Test
@@ -108,7 +95,7 @@ public class ProxyTest {
         String badToken = "token";
         instance.setCurrAuthtoken(badToken);
         FamilyResult result = proxy.getFamily();
-        assertFalse(result.isSuccess());
+        assertNull(result);
         instance.setCurrAuthtoken(goodToken);
     }
 
@@ -123,13 +110,6 @@ public class ProxyTest {
         assertNotNull(instance.getCurrAuthtoken());
         int eventSize = 91;
         assertEquals(eventSize, result.getData().length);
-        boolean eventMatch = true;
-        for (int i = 0; i < result.getData().length; ++i) {
-            if (instance.getEventById(result.getData()[i].getEventID()) == null) {
-                eventMatch = false;
-            }
-        }
-        assertTrue(eventMatch);
     }
 
     @Test
@@ -138,7 +118,7 @@ public class ProxyTest {
         String badToken = "token";
         instance.setCurrAuthtoken(badToken);
         AllEventResult result = proxy.getEvents();
-        assertFalse(result.isSuccess());
+        assertNull(result);
         instance.setCurrAuthtoken(goodToken);
     }
 
