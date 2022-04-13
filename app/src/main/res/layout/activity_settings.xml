@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SettingsActivity">
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/lifeStorySwitch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/storyLines">
+
+    </androidx.appcompat.widget.SwitchCompat>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_below="@+id/lifeStorySwitch"/>
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/famTreeSwitch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/famTree"
+        android:layout_below="@+id/lifeStorySwitch">
+
+    </androidx.appcompat.widget.SwitchCompat>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_below="@+id/famTreeSwitch"/>
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/spouseSwitch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/spouseLine"
+        android:layout_below="@+id/famTreeSwitch">
+
+    </androidx.appcompat.widget.SwitchCompat>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_below="@+id/spouseSwitch"/>
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/dadSideSwitch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/dadSide"
+        android:layout_below="@+id/spouseSwitch">
+
+    </androidx.appcompat.widget.SwitchCompat>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_below="@+id/dadSideSwitch"/>
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/momSideSwitch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/momSide"
+        android:layout_below="@+id/dadSideSwitch">
+
+    </androidx.appcompat.widget.SwitchCompat>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_below="@+id/momSideSwitch"/>
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/maleSwitch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/maleLines"
+        android:layout_below="@+id/momSideSwitch">
+
+    </androidx.appcompat.widget.SwitchCompat>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_below="@+id/maleSwitch"/>
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/femaleSwitch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/femaleLines"
+        android:layout_below="@+id/maleSwitch">
+
+    </androidx.appcompat.widget.SwitchCompat>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_below="@+id/femaleSwitch"/>
+
+    <Button
+        android:id="@+id/logoutButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/femaleSwitch"
+        android:text="@string/logout">
+    </Button>
+
+</RelativeLayout>

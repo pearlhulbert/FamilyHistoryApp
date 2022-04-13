@@ -20,4 +20,13 @@
     <string name="male">Male</string>
     <string name="female">Female</string>
     <string name="search">Search</string>
+    <string name="storyLines">Life Story Lines\nShow life story lines</string>
+    <string name="logout">Logout</string>
+    <string name="famTree">Family Tree Lines\nShow family tree lines</string>
+    <string name="spouseLine">Spouse Lines\nShow spouse Lines</string>
+    <string name="dadSide">Father\'s Side\nShow father\'s side of family</string>
+    <string name="momSide">Mother\'s Side\nShow mother\'s side of family</string>
+    <string name="maleLines">Male Events\nShow events based on gender</string>
+    <string name="femaleLines">Female Events\nShow events based on gender</string>
+    <string name="settings">Settings</string>
 </resources>

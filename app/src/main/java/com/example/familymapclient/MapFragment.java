@@ -36,7 +36,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -93,6 +95,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         if (item.getItemId() ==  R.id.search_button) {
             Intent searchIntent = new Intent(getActivity(), SearchActivity.class);
             startActivity(searchIntent);
+            return true;
+        }
+        else if (item.getItemId() == R.id.settings_button) {
+            Intent settingsIntent = new Intent(getActivity(), SettingsActivity.class);
+            startActivity(settingsIntent);
             return true;
         }
         else {
@@ -154,12 +161,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     private void addEventMarkers() {
         instance = DataCache.getInstance();
-        Map<String, Event> events = instance.getEvents();
-        for (Event e : events.values()) {
-            LatLng currPosition = new LatLng(e.getLatitude(), e.getLongitude());
-            Marker newMarker = map.addMarker(new MarkerOptions().position(currPosition).title(e.getEventType()));
-            newMarker.setTag(e);
-            setMarkerColor(newMarker, e);
+        else {
+            Map<String, Event> events = instance.getEvents();
+            for (Event e : events.values()) {
+                LatLng currPosition = new LatLng(e.getLatitude(), e.getLongitude());
+                Marker newMarker = map.addMarker(new MarkerOptions().position(currPosition).title(e.getEventType()));
+                newMarker.setTag(e);
+                setMarkerColor(newMarker, e);
+            }
         }
     }
 

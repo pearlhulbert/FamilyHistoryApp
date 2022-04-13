@@ -16,6 +16,12 @@ public class DataCache {
         this.personEvents = new HashMap<>();
         this.personFamilyRelationships = new HashMap<>();
         this.personFamily = new HashMap<>();
+        this.males = new ArrayList<>();
+        this.females = new ArrayList<>();
+        this.momSide = new ArrayList<>();
+        this.dadSide = new ArrayList<>();
+        this.maleFilter = false;
+        this.femaleFilter = false;
     }
 
     private Map<String, Person> people;
@@ -23,10 +29,34 @@ public class DataCache {
     private Map<String, List<Event>> personEvents;
     private Map<Person, String> personFamilyRelationships;
     private Map<String, List<Person>> personFamily;
+    private List<Person> males;
+    private List<Person> females;
+    private List<Person> momSide;
+    private List<Person> dadSide;
     private Person currPerson;
     private String currAuthtoken;
     private String userPersonId;
     private Event currEvent;
+    private boolean femaleFilter;
+    private boolean hasFilter;
+
+    public boolean isFemaleFilter() {
+        return femaleFilter;
+    }
+
+    public void setFemaleFilter(boolean femaleFilter) {
+        this.femaleFilter = femaleFilter;
+    }
+
+    public boolean isMaleFilter() {
+        return maleFilter;
+    }
+
+    public void setMaleFilter(boolean maleFilter) {
+        this.maleFilter = maleFilter;
+    }
+
+    private boolean maleFilter;
 
     public Event getCurrEvent() {
         return currEvent;
@@ -113,6 +143,73 @@ public class DataCache {
         this.personFamily = personFamily;
     }
 
+    public void filterByGender() {
+        for (Person p: people.values()) {
+            if (p.getGender().equals("m")) {
+                males.add(p);
+            }
+            else {
+                females.add(p);
+            }
+        }
+    }
+
+    public List<Event> getMaleEvents() {
+        List<Event> maleEvents = new ArrayList<>();
+        for (Event e : events.values()) {
+            for (Person p: males) {
+                if (e.getPersonId().equals(p.getPersonID())) {
+                    maleEvents.add(e);
+                }
+            }
+        }
+        return maleEvents;
+    }
+
+    public List<Person> getMales() {
+        return males;
+    }
+
+    public void setMales(List<Person> males) {
+        this.males = males;
+    }
+
+    public List<Person> getFemales() {
+        return females;
+    }
+
+    public void setFemales(List<Person> females) {
+        this.females = females;
+    }
+
+    public List<Person> getMomSide() {
+        return momSide;
+    }
+
+    public void setMomSide(List<Person> momSide) {
+        this.momSide = momSide;
+    }
+
+    public List<Person> getDadSide() {
+        return dadSide;
+    }
+
+    public void setDadSide(List<Person> dadSide) {
+        this.dadSide = dadSide;
+    }
+
+    public List<Event> getFemaleEvents() {
+        List<Event> femaleEvents = new ArrayList<>();
+        for (Event e : events.values()) {
+            for (Person p: females) {
+                if (e.getPersonId().equals(p.getPersonID())) {
+                    femaleEvents.add(e);
+                }
+            }
+        }
+        return femaleEvents;
+    }
+
     public void createPersonFamily() {
         if (!personFamilyRelationships.isEmpty() || !personFamily.isEmpty()) {
             personFamilyRelationships.clear();
@@ -145,7 +242,6 @@ public class DataCache {
             }
             personFamily.put(currPerson.getPersonID(), theFam);
         }
-
     }
 
 }
