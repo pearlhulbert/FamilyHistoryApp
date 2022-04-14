@@ -5,24 +5,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.provider.CalendarContract;
-import android.provider.Contacts;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.FontAwesomeIcons;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import Data.DataCache;
 import model.Event;
@@ -76,10 +69,12 @@ public class PersonActivity extends AppCompatActivity {
 
         private final List<Event> personEvents;
         private final List<Person> personFamily;
+        private DataCache instance;
 
         ExpandableListAdapter(List<Event> personEvents, List<Person> personFamily) {
             this.personEvents = personEvents;
             this.personFamily = personFamily;
+            this.instance = DataCache.getInstance();
         }
 
         @Override
@@ -170,7 +165,7 @@ public class PersonActivity extends AppCompatActivity {
 
         private void initializeEventView(View eventItemView, final int childPosition) {
             TextView eventNameView = eventItemView.findViewById(R.id.eventTitle);
-            eventNameView.setText(eventToText(personEvents.get(childPosition)));
+            eventNameView.setText(instance.eventToText(personEvents.get(childPosition)));
             Drawable eventIcon = new IconDrawable(PersonActivity.this, FontAwesomeIcons.fa_map_marker)
                     .colorRes(R.color.map_marker_icon).sizeDp(40);
             eventNameView.setCompoundDrawables(eventIcon, null, null, null);
@@ -178,7 +173,6 @@ public class PersonActivity extends AppCompatActivity {
             eventItemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    DataCache instance = DataCache.getInstance();
                     instance.setCurrEvent(personEvents.get(childPosition));
                     Intent intent = new Intent(PersonActivity.this, EventActivity.class);
                     startActivity(intent);
@@ -186,18 +180,9 @@ public class PersonActivity extends AppCompatActivity {
             });
         }
 
-        private String eventToText(Event event) {
-            DataCache instance = DataCache.getInstance();
-            String eventString;
-            Person currPerson = instance.getPersonById(event.getPersonId());
-            eventString = event.getEventType().toUpperCase() + ": " + event.getCity() + ", " + event.getCountry() + " (" +
-                    event.getYear() + ")\n" + currPerson.getFirstName() + " " + currPerson.getLastName();
-            return eventString;
-        }
-
         private void initializeFamilyView(View familyItemView, final int childPosition) {
             TextView famNameView = familyItemView.findViewById(R.id.familyTitle);
-            famNameView.setText(personToText(personFamily.get(childPosition)));
+            famNameView.setText(instance.personToTextPersonRelationship(personFamily.get(childPosition)));
             Drawable genderIcon;
             if (personFamily.get(childPosition).getGender().equals("m")) {
                 genderIcon = new IconDrawable(PersonActivity.this, FontAwesomeIcons.fa_male).
@@ -212,21 +197,11 @@ public class PersonActivity extends AppCompatActivity {
             familyItemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    DataCache instance = DataCache.getInstance();
                     instance.setCurrPerson(personFamily.get(childPosition));
                     Intent intent = new Intent(PersonActivity.this, PersonActivity.class);
                     startActivity(intent);
                 }
             });
-        }
-
-        private String personToText(Person person) {
-            String personString;
-            DataCache instance = DataCache.getInstance();
-            instance.createPersonFamily();
-            Map<Person, String> familyRelationships = instance.getPersonFamilyRelationships();
-            personString = familyRelationships.get(person) + ": " + person.getFirstName() + " " + person.getLastName();
-            return personString;
         }
 
         @Override

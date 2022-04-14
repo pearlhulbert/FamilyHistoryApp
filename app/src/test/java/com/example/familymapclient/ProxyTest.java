@@ -12,6 +12,7 @@ import Proxy.ServerProxy;
 import request.LoginRequest;
 import request.RegisterRequest;
 import result.AllEventResult;
+import result.ClearResult;
 import result.FamilyResult;
 import result.LoginResult;
 import result.RegisterResult;
@@ -120,6 +121,14 @@ public class ProxyTest {
         AllEventResult result = proxy.getEvents();
         assertNull(result);
         instance.setCurrAuthtoken(goodToken);
+    }
+
+    @Test
+    public void clearTest() {
+        ClearResult result = proxy.clear();
+        assertTrue(result.isSuccess());
+        assertNull(instance.getCurrPerson());
+        assertNull(instance.getCurrAuthtoken());
     }
 
 }

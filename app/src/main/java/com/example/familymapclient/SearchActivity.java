@@ -60,18 +60,7 @@ public class SearchActivity extends AppCompatActivity {
             public boolean onQueryTextChange(String s) {
                 keepEvents.clear();
                 keepPeople.clear();
-                for (Event e : events) {
-                    if (eventToText(e).toLowerCase().contains(s.toLowerCase())) {
-                        keepEvents.add(e);
-                        System.out.println("Event: " + eventToText(e));
-                    }
-                }
-                for (Person p : people) {
-                    if (personToText(p).toLowerCase().contains(s.toLowerCase())) {
-                        keepPeople.add(p);
-                        System.out.println("Person: " + personToText(p));
-                    }
-                }
+                instance.search(s, keepEvents, keepPeople);
                 adapter.updateStuff(keepEvents, keepPeople);
                 return true;
             }
@@ -161,6 +150,7 @@ public class SearchActivity extends AppCompatActivity {
         private final int viewType;
         private Event event;
         private Person person;
+        private DataCache instance;
 
         SearchViewHolder(View view, int viewType) {
             super(view);
@@ -173,13 +163,12 @@ public class SearchActivity extends AppCompatActivity {
             } else {
                 name = itemView.findViewById(R.id.eventTitleSearch);
             }
+            this.instance = DataCache.getInstance();
         }
 
         private void bind(Event event) {
-            System.out.println("bind event");
             this.event = event;
-            System.out.println("Event (bind): " + eventToText(event));
-            name.setText(eventToText(event));
+            name.setText(instance.eventToText(event));
             Drawable eventIcon = new IconDrawable(SearchActivity.this, FontAwesomeIcons.fa_map_marker)
                     .colorRes(R.color.map_marker_icon).sizeDp(40);
             name.setCompoundDrawables(eventIcon, null, null, null);
@@ -187,10 +176,8 @@ public class SearchActivity extends AppCompatActivity {
         }
 
         private void bind(Person person) {
-            System.out.println("bind person");
             this.person = person;
-            System.out.println("Person (bind): " + personToText(person));
-            name.setText(personToText(person));
+            name.setText(instance.personToText(person));
             Drawable genderIcon;
             if (person.getGender().equals("m")) {
                 genderIcon = new IconDrawable(SearchActivity.this, FontAwesomeIcons.fa_male)
@@ -204,31 +191,13 @@ public class SearchActivity extends AppCompatActivity {
             }
         }
 
-        private String eventToText(Event event) {
-            DataCache instance = DataCache.getInstance();
-            String eventString;
-            Person currPerson = instance.getPersonById(event.getPersonId());
-            eventString = event.getEventType().toUpperCase() + ": " + event.getCity() + ", " + event.getCountry() + " (" +
-                    event.getYear() + ")\n" + currPerson.getFirstName() + " " + currPerson.getLastName();
-            return eventString;
-        }
-
-        private String personToText(Person person) {
-            String personString;
-            personString = person.getFirstName() + " " + person.getLastName();
-            return personString;
-        }
-
-
         @Override
         public void onClick(View view) {
             if (viewType == FAMILY_ITEM_VIEW_TYPE) {
-                DataCache instance = DataCache.getInstance();
                 instance.setCurrPerson(person);
                 Intent intent = new Intent(SearchActivity.this, PersonActivity.class);
                 startActivity(intent);
             } else {
-                DataCache instance = DataCache.getInstance();
                 instance.setCurrEvent(event);
                 Intent intent = new Intent(SearchActivity.this, EventActivity.class);
                 startActivity(intent);

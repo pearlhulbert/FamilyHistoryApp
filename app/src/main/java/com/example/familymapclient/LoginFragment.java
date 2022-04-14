@@ -1,10 +1,7 @@
 package com.example.familymapclient;
 
-import android.content.Context;
-import android.location.GnssAntennaInfo;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
@@ -22,19 +19,11 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import Data.DataCache;
 import Proxy.ServerProxy;
-import model.Event;
-import model.Person;
 import request.LoginRequest;
 import request.RegisterRequest;
 import result.AllEventResult;
@@ -241,10 +230,10 @@ public class LoginFragment extends Fragment {
 
     private class LoginTask implements Runnable {
 
-        private LoginRequest request;
-        private String serverHost;
-        private String serverPort;
-        private Handler handler;
+        private final LoginRequest request;
+        private final String serverHost;
+        private final String serverPort;
+        private final Handler handler;
         private DataCache instance;
 
         public LoginTask(LoginRequest log, String host, String port, Handler handle) {
@@ -263,9 +252,9 @@ public class LoginFragment extends Fragment {
             if (instance.getPeople().isEmpty() || instance.getEvents().isEmpty()) {
                 FamilyResult familyResult = proxy.getFamily();
                 AllEventResult eventResult = proxy.getEvents();
-                addPeopleToCache(familyResult.getFamily());
-                addEventsToCache(eventResult.getData());
-                addPersonEventsToCache(familyResult.getFamily(), eventResult.getData());
+                instance.addPeopleToCache(familyResult.getFamily());
+                instance.addEventsToCache(eventResult.getData());
+                instance.addPersonEventsToCache(familyResult.getFamily(), eventResult.getData());
                 sendMessage(result.isSuccess() && familyResult.isSuccess() && eventResult.isSuccess());
             }
             else {
@@ -273,39 +262,6 @@ public class LoginFragment extends Fragment {
             }
         }
 
-        private void addPeopleToCache(Person[] people) {
-            instance = DataCache.getInstance();
-            Map<String, Person> personMap = new HashMap<>();
-            for (int i = 0; i < people.length; ++i) {
-                personMap.put(people[i].getPersonID(), people[i]);
-            }
-            instance.setPeople(personMap);
-        }
-
-        private void addEventsToCache(Event[] events) {
-            instance = DataCache.getInstance();
-            Map<String, Event> eventMap = new HashMap<>();
-            for (int i = 0; i < events.length; ++i) {
-                eventMap.put(events[i].getEventID(), events[i]);
-            }
-            instance.setEvents(eventMap);
-        }
-
-        private void addPersonEventsToCache(Person[] people, Event[] events) {
-            instance = DataCache.getInstance();
-            Map<String, List<Event>> personEvents = new HashMap<>();
-            for (int i = 0; i < people.length; ++i) {
-                List<Event> eventList = new ArrayList<>();
-                String currId = people[i].getPersonID();
-                personEvents.put(currId, eventList);
-                for (int j = 0; j < events.length; ++j) {
-                    if (events[j].getPersonId().equals(currId)) {
-                        personEvents.get(currId).add(events[j]);
-                    }
-                }
-            }
-            instance.setPersonEvents(personEvents);
-        }
 
         private void sendMessage(boolean success) {
             Message message = Message.obtain();
@@ -339,27 +295,9 @@ public class LoginFragment extends Fragment {
             RegisterResult result = proxy.register(request);
             FamilyResult familyResult = proxy.getFamily();
             AllEventResult eventResult = proxy.getEvents();
-            addPeopleToCache(familyResult.getFamily());
-            addEventsToCache(eventResult.getData());
+            instance.addPeopleToCache(familyResult.getFamily());
+            instance.addEventsToCache(eventResult.getData());
             sendMessage(result.isSuccess() && familyResult.isSuccess() && eventResult.isSuccess());
-        }
-
-        private void addPeopleToCache(Person[] people) {
-            instance = DataCache.getInstance();
-            Map<String, Person> personMap = new HashMap<>();
-            for (int i = 0; i < people.length; ++i) {
-                personMap.put(people[i].getPersonID(), people[i]);
-            }
-            instance.setPeople(personMap);
-        }
-
-        private void addEventsToCache(Event[] events) {
-            instance = DataCache.getInstance();
-            Map<String, Event> eventMap = new HashMap<>();
-            for (int i = 0; i < events.length; ++i) {
-                eventMap.put(events[i].getEventID(), events[i]);
-            }
-            instance.setEvents(eventMap);
         }
 
         private void sendMessage(boolean success) {

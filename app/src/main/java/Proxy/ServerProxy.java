@@ -228,6 +228,8 @@ public class ServerProxy {
         return null;
     }
 
+
+
     public ClearResult clear() {
        try {
            URL url = new URL("http://" + serverHost + ":" + serverPort + "/clear");
@@ -242,6 +244,9 @@ public class ServerProxy {
                String respData = readString(respBody);
                respBody.close();
                ClearResult result = gson.fromJson(respData, ClearResult.class);
+               DataCache instance = DataCache.getInstance();
+               instance.setCurrPerson(null);
+               instance.setCurrAuthtoken(null);
                return result;
            }
            else {

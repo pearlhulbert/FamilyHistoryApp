@@ -1,44 +1,29 @@
 package com.example.familymapclient;
 
-import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import android.provider.ContactsContract;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.familymapclient.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -55,14 +40,14 @@ import com.joanzapata.iconify.fonts.FontAwesomeIcons;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapLoadedCallback {
     private GoogleMap map;
-    private Map<String, Float> markerColors = new HashMap<>();
+    private final Map<String, Float> markerColors = new HashMap<>();
     private final float[] colorChoices = {BitmapDescriptorFactory.HUE_AZURE, BitmapDescriptorFactory.HUE_BLUE, BitmapDescriptorFactory.HUE_CYAN, BitmapDescriptorFactory.HUE_GREEN,
     BitmapDescriptorFactory.HUE_MAGENTA, BitmapDescriptorFactory.HUE_ORANGE, BitmapDescriptorFactory.HUE_RED, BitmapDescriptorFactory.HUE_ROSE, BitmapDescriptorFactory.HUE_VIOLET,
     BitmapDescriptorFactory.HUE_YELLOW};
     private TextView eventView;
     private View view;
-    private Set<Integer> usedIndexes = new TreeSet<>();
-    private DataCache instance;
+    private final Set<Integer> usedIndexes = new TreeSet<>();
+    private DataCache instance = DataCache.getInstance();
     private String currGender;
 
     @Override
@@ -143,7 +128,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     }
 
     private void displayEvent(Event currEvent, LatLng position) {
-        eventView.setText(eventToText(currEvent));
+        eventView.setText(instance.eventToText(currEvent));
         Drawable genderIcon;
         if (currGender.equals("m")) {
             genderIcon = new IconDrawable(getActivity(), FontAwesomeIcons.fa_male).
@@ -185,16 +170,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         currMarker.setIcon(BitmapDescriptorFactory.defaultMarker(markerColors.get(currEvent.getEventType())));
     }
 
-    private String eventToText(Event event) {
-        instance = DataCache.getInstance();
-        String eventString;
-        Person currPerson = instance.getPersonById(event.getPersonId());
-        currGender = currPerson.getGender();
-        eventString = currPerson.getFirstName() + " " + currPerson.getLastName() + "\n" +
-                event.getEventType().toUpperCase() + ": " + event.getCity() + ", " + event.getCountry() + " (" +
-                event.getYear() + ")";
-        return eventString;
-    }
 
     @Override
     public void onMapLoaded() {

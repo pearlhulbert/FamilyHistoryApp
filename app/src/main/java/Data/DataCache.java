@@ -16,12 +16,6 @@ public class DataCache {
         this.personEvents = new HashMap<>();
         this.personFamilyRelationships = new HashMap<>();
         this.personFamily = new HashMap<>();
-        this.males = new ArrayList<>();
-        this.females = new ArrayList<>();
-        this.momSide = new ArrayList<>();
-        this.dadSide = new ArrayList<>();
-        this.maleFilter = false;
-        this.femaleFilter = false;
     }
 
     private Map<String, Person> people;
@@ -29,34 +23,11 @@ public class DataCache {
     private Map<String, List<Event>> personEvents;
     private Map<Person, String> personFamilyRelationships;
     private Map<String, List<Person>> personFamily;
-    private List<Person> males;
-    private List<Person> females;
-    private List<Person> momSide;
-    private List<Person> dadSide;
     private Person currPerson;
     private String currAuthtoken;
     private String userPersonId;
     private Event currEvent;
-    private boolean femaleFilter;
-    private boolean hasFilter;
 
-    public boolean isFemaleFilter() {
-        return femaleFilter;
-    }
-
-    public void setFemaleFilter(boolean femaleFilter) {
-        this.femaleFilter = femaleFilter;
-    }
-
-    public boolean isMaleFilter() {
-        return maleFilter;
-    }
-
-    public void setMaleFilter(boolean maleFilter) {
-        this.maleFilter = maleFilter;
-    }
-
-    private boolean maleFilter;
 
     public Event getCurrEvent() {
         return currEvent;
@@ -143,71 +114,62 @@ public class DataCache {
         this.personFamily = personFamily;
     }
 
-    public void filterByGender() {
-        for (Person p: people.values()) {
-            if (p.getGender().equals("m")) {
-                males.add(p);
-            }
-            else {
-                females.add(p);
-            }
+    public void addPeopleToCache(Person[] people) {
+        for (int i = 0; i < people.length; ++i) {
+            this.people.put(people[i].getPersonID(), people[i]);
         }
     }
 
-    public List<Event> getMaleEvents() {
-        List<Event> maleEvents = new ArrayList<>();
-        for (Event e : events.values()) {
-            for (Person p: males) {
-                if (e.getPersonId().equals(p.getPersonID())) {
-                    maleEvents.add(e);
+    public void addEventsToCache(Event[] events) {
+        for (int i = 0; i < events.length; ++i) {
+            this.events.put(events[i].getEventID(), events[i]);
+        }
+    }
+
+    public void addPersonEventsToCache(Person[] people, Event[] events) {
+        for (int i = 0; i < people.length; ++i) {
+            List<Event> eventList = new ArrayList<>();
+            String currId = people[i].getPersonID();
+            personEvents.put(currId, eventList);
+            for (int j = 0; j < events.length; ++j) {
+                if (events[j].getPersonId().equals(currId)) {
+                    personEvents.get(currId).add(events[j]);
                 }
             }
         }
-        return maleEvents;
     }
 
-    public List<Person> getMales() {
-        return males;
+    public String eventToText(Event event) {
+        String eventString;
+        Person currPerson = people.get(event.getPersonId());
+        eventString = event.getEventType().toUpperCase() + ": " + event.getCity() + ", " + event.getCountry() + " (" +
+                event.getYear() + ")\n" + currPerson.getFirstName() + " " + currPerson.getLastName();
+        return eventString;
     }
 
-    public void setMales(List<Person> males) {
-        this.males = males;
+    public String personToTextPersonRelationship(Person person) {
+        String personString;
+        personString = personFamilyRelationships.get(person) + ": " + person.getFirstName() + " " + person.getLastName();
+        return personString;
     }
 
-    public List<Person> getFemales() {
-        return females;
+    public String personToText(Person person) {
+        String personString;
+        personString = person.getFirstName() + " " + person.getLastName();
+        return personString;
     }
 
-    public void setFemales(List<Person> females) {
-        this.females = females;
-    }
-
-    public List<Person> getMomSide() {
-        return momSide;
-    }
-
-    public void setMomSide(List<Person> momSide) {
-        this.momSide = momSide;
-    }
-
-    public List<Person> getDadSide() {
-        return dadSide;
-    }
-
-    public void setDadSide(List<Person> dadSide) {
-        this.dadSide = dadSide;
-    }
-
-    public List<Event> getFemaleEvents() {
-        List<Event> femaleEvents = new ArrayList<>();
+    public void search(String s, List<Event> keepEvents, List<Person> keepPeople) {
         for (Event e : events.values()) {
-            for (Person p: females) {
-                if (e.getPersonId().equals(p.getPersonID())) {
-                    femaleEvents.add(e);
-                }
+            if (eventToText(e).toLowerCase().contains(s.toLowerCase())) {
+                keepEvents.add(e);
             }
         }
-        return femaleEvents;
+        for (Person p : people.values()) {
+            if (personToText(p).toLowerCase().contains(s.toLowerCase())) {
+                keepPeople.add(p);
+            }
+        }
     }
 
     public void createPersonFamily() {

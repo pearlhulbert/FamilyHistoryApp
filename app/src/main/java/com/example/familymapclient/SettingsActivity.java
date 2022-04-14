@@ -23,24 +23,6 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
         DataCache instance = DataCache.getInstance();
 
-        SwitchCompat maleSwitch = findViewById(R.id.maleSwitch);
-        maleSwitch.setOnClickListener(new View.OnClickListener() {
-              @Override
-              public void onClick(View view) {
-                  instance.filterByGender();
-                  instance.setMaleFilter(true);
-              }
-          }
-        );
-        SwitchCompat femaleSwitch = findViewById(R.id.femaleSwitch);
-        femaleSwitch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                instance.filterByGender();
-                instance.setFemaleFilter(true);
-            }
-        });
-
         Button logoutButton = findViewById(R.id.logoutButton);
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
