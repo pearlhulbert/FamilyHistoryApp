@@ -1,4 +1,3 @@
-#Family History App
 This family history app is a local app developed in android studio. This was a solo project for my Advanced Programming Concepts class (CS 240). Details on both the back and front end can be found below.
 
 Back End (found in src):
